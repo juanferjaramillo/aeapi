@@ -22,7 +22,7 @@ conn.sync({ force: false }).then(async () => {
   server.listen(port, () => {
     console.log("%s listening at 3001"); // se imprime en consola para confirmar que el servidor está corriendo
   });
-  const url = 'http://localhost:3001/postSupervisor';
+  const url = 'https://aeapi-production.up.railway.app/postSupervisor';
   // Parámetros de la petición POST
   const options = {
     method: 'POST',
