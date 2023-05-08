@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const postCompanion = async (req, res) => {
   try {
     const { email, password, rol } = req.body;
+
     if (email && password) {
       // Generar hash de la contraseña
       const passwordHash = await bcrypt.hashSync(password, 10);
@@ -11,7 +12,7 @@ const postCompanion = async (req, res) => {
       const newCompanion = await Companion.create({
         email: email,
         password: passwordHash,
-        rol: rol
+        rol: rol,
       });
       res.status(201).json(newCompanion);
     } else {

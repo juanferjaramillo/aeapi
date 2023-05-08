@@ -1,4 +1,10 @@
-const { Companion , CityTimeZone ,CompanionShift ,Supervisor, SupervisorShift} = require("../db");
+const {
+  Companion,
+  CityTimeZone,
+  CompanionShift,
+  Supervisor,
+  SupervisorShift,
+} = require("../db");
 
 const bcrypt = require("bcrypt");
 
@@ -7,7 +13,7 @@ const getBothRoles = async (req, res) => {
   try {
     const { email } = req.body;
     const companion = await Companion.findOne({
-      where: { email },
+      where: { email: email },
       include: [
         {
           model: CompanionShift,
@@ -66,7 +72,6 @@ const getBothRoles = async (req, res) => {
   }
 };
 
-//Validacion del usuario autorizado a hacer dicho cambio(debe ser un SuperAdmin)
 const requireLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
