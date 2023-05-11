@@ -34,6 +34,7 @@ const getAllSupervisorShift = require("../Controllers/Supervisor/getAllSuperviso
 const postSupervisorCharge = require("../Controllers/Supervisor/postSupervisorCharge");
 const getSupervisorCharge = require("../Controllers/Supervisor/getSupervisorCharge");
 const putSupervisorCharge = require("../Controllers/Supervisor/putSupervisorCharge");
+const getMatchShiftTime = require("../Controllers/Supervisor/getMatchShiftTime");
 
 const getCityTimeZone = require("../Controllers/TimeZone/getCityTimeZone");
 //* Both
@@ -41,10 +42,12 @@ const { getBothRoles, requireLogin } = require("../Controllers/getBothRoles");
 const getUserById = require("../Controllers/getUserById");
 const getAllCompanionsPerShift = require("../Controllers/Companion/getAllCompanionsPerShift");
 const getAllSupervisorsPerShift = require("../Controllers/Supervisor/getAllSupervisorsPerShift");
-
+const getOnlineSupervisor = require("../Controllers/Supervisor/getOnlineSupervisor")
 //* nodemailer
-const postEmailController = require(".././Controllers/Nodemailer/postEmailController");
-router.post("/postEmail", postEmailController);
+const postCreatedAccount = require("../Controllers/Nodemailer/accountCreated/postCreatedAccount");
+const getPasswordRecoveryConde = require("../Controllers/Nodemailer/passwordController/getPasswordRecoveryCode");
+router.post("/postCreatedAccount", postCreatedAccount);
+router.get("/getPasswordRecoveryCode/:email", getPasswordRecoveryConde);
 
 router.put("/putIsSuperAdmin/:id", requireSuperAdmin, putSuperAdmin);
 router.get("/getCompanion", getCompanion);
@@ -54,7 +57,7 @@ router.post("/getOneCompanion", requireLogin, getOneCompanion);
 router.get("/getCompanionShift", getCompanionShift);
 router.post("/postAssignCompanionShift/:idCompanion", assignCompanionShift);
 router.delete("/deleteCompanionShift", deleteCompanionShift);
-router.post("/postRankUpCompanion/:id", requireSuperAdmin, postRankUpCompanion);
+router.post("/postRankUpCompanion", requireSuperAdmin, postRankUpCompanion);
 router.get("/getCompanion/:idShift", getCompanionShiftById);
 router.get("/getAllCompanionShift", getAllCompanionShift);
 router.get("/getAllCompanionsPerShift", getAllCompanionsPerShift);
@@ -65,11 +68,7 @@ router.put("/putSupervisor/:id", putSupervisor);
 router.post("/getOneSupervisor", requireLogin, getOneSupervisor);
 router.delete("/deleteSupervisorShift", deleteSupervisorShift);
 router.get("/getSupervisorShift", getSupervisorShift);
-router.post(
-  "/postDowngradeSupervisor/:id",
-  requireSuperAdmin,
-  downgradeSupervisor
-);
+router.post("/postDowngradeSupervisor", requireSuperAdmin, downgradeSupervisor);
 router.post("/postAssignSupervisorShift/:idSupervisor", assignSupervisorShift);
 router.get("/getAllSupervisorShift", getAllSupervisorShift);
 router.post("/postSupervisorCharge/:idSupervisor", postSupervisorCharge);
@@ -80,5 +79,6 @@ router.get("/getAllSupervisorsPerShift", getAllSupervisorsPerShift);
 router.get("/getCityTimeZone", getCityTimeZone);
 router.post("/getBothRoles", requireLogin, getBothRoles);
 router.get("/getUserById/:id", getUserById);
-
+router.get("/getMatchShiftTime/:idCompanion", getMatchShiftTime);
+router.get("/getOnlineSupervisor", getOnlineSupervisor)
 module.exports = router;

@@ -20,13 +20,11 @@ const putCompanion = async (req, res) => {
     studies,
     gender,
     isActive,
+    rol
   } = req.body;
   //Requiere el id del usuario enviado por parametro
   const { id } = req.params;
-  let newDate = null;
-  if (birthdayDate) {
-    newDate = new Date(birthdayDate);
-  }
+  let newDate = birthdayDate ? new Date(birthdayDate) : undefined;
   const timezone = await CityTimeZone.findByPk(cityTimeZone);
   if (timezone) {
     const companion = await Companion.findByPk(id);
@@ -46,7 +44,8 @@ const putCompanion = async (req, res) => {
         profession,
         studies,
         gender,
-        isActive: isActive !== null && isActive !== undefined ? isActive : true
+        isActive: isActive !== null && isActive !== undefined ? isActive : true,
+        rol
       },
       {
         where: { id: id },
@@ -70,9 +69,9 @@ const putCompanion = async (req, res) => {
       ],
     });
     // Devuelve el acompañante actualizado
-    res.status(200).json(companion);
+   return res.status(200).json(companion);
   } catch (error) {
-    res.status(400).json(error.message);
+   return res.status(400).json(error.message);
   }
 };
 
