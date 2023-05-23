@@ -1,13 +1,6 @@
-const {
-  Supervisor,
-  Companion,
-  SupervisorShift,
-  CityTimeZone,
-} = require("../../db");
+const {Supervisor,Companion,SupervisorShift,CityTimeZone,} = require("../../db");
 
-//Controlador para modificar un supervisor
 const putSupervisor = async (req, res) => {
-  //Recibe la info por body desde el front
   const {
     name,
     lastName,
@@ -23,15 +16,24 @@ const putSupervisor = async (req, res) => {
     isActive,
     rol
   } = req.body;
-  //Recibe id por params
   const { id } = req.params;
-  const timezone = await CityTimeZone.findByPk(cityTimeZone);
   try {
-    //Realiza un update del supervisor con ese id en la bd
+    let firstName = name.split(" ")[0].charAt(0).toUpperCase() + name.split(" ")[0].slice(1);
+    let secondName = "";
+    if (name.split(" ")[1]) {
+      secondName = name.split(" ")[1].charAt(0).toUpperCase() + name.split(" ")[1].slice(1);
+    }
+    let fullName = firstName + " " + secondName
+    let firstLastName = lastName.split(" ")[0].charAt(0).toUpperCase() + lastName.split(" ")[0].slice(1);
+    let secondLastName = "";
+    if (lastName.split(" ")[1]) {
+      secondLastName = lastName.split(" ")[1].charAt(0).toUpperCase() + lastName.split(" ")[1].slice(1);
+    }
+    let fullLastName = firstLastName + " " + secondLastName
     await Supervisor.update(
       {
-        name,
-        lastName,
+        name: fullName,
+        lastName: fullLastName,
         profilePhoto,
         nationality,
         country,
@@ -42,7 +44,10 @@ const putSupervisor = async (req, res) => {
         isActive: isActive !== null && isActive !== undefined ? isActive : true,
         rol
       },
-      { where: { id: id } }
+      { 
+        where: { id: id },
+        returning: true,
+     }
     );
     const supervisor = await Supervisor.findByPk(id);
     
@@ -51,11 +56,19 @@ const putSupervisor = async (req, res) => {
       supervisor.birthdayDate = newDate;
      await supervisor.save();
     }
+    if(isActive === false){
+      await supervisor.setSupervisorShifts([]);
+      const companions = await Companion.findAll({ where: { SupervisorId: supervisor.id } });
+      for (const companion of companions) {
+      companion.SupervisorId = null;
+      await companion.save();
+      }
+    }
+    
+    const timezone = await CityTimeZone.findByPk(cityTimeZone);
     if (timezone) {
-      
       await supervisor.setCityTimeZone(timezone.id);
     }
-    // Encuentra el supervisor actualizado
     const supervisorUpdated = await Supervisor.findByPk(id, {
       include: [
         {
@@ -71,10 +84,9 @@ const putSupervisor = async (req, res) => {
         },
       ],
     });
-    // Devuelve el supervisor actualizado
-    res.status(200).json(supervisorUpdated);
+   return res.status(200).json(supervisorUpdated);
   } catch (error) {
-    res.status(400).json(error.message);
+   return res.status(400).json(error.message);
   }
 };
 
